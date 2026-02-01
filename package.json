@@ -1,0 +1,44 @@
+{
+    "name": "spotfire-timeseries-comparison-chart",
+    "version": "2.0.0",
+    "description": "A modern time series comparison chart mod for TIBCO Spotfire - compare multiple data series over time with interactive features and theme support",
+    "main": "index.js",
+    "scripts": {
+        "server": "mods-dev-server dist",
+        "build": "webpack --mode production --no-devtool",
+        "build-watch": "webpack --watch",
+        "start": "npm run build-watch"
+    },
+    "keywords": [
+        "spotfire",
+        "mods",
+        "visualization",
+        "chart",
+        "time-series",
+        "d3",
+        "comparison",
+        "tibco"
+    ],
+    "author": "Spotfire Mods",
+    "license": "BSD-3-Clause",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TousifAhamed/timeseries-comparison-chart-mod.git"
+    },
+    "bugs": {
+        "url": "https://github.com/TousifAhamed/timeseries-comparison-chart-mod/issues"
+    },
+    "homepage": "https://github.com/TousifAhamed/timeseries-comparison-chart-mod#readme",
+    "devDependencies": {
+        "@babel/core": "7.17.9",
+        "@babel/plugin-transform-runtime": "7.17.0",
+        "@babel/preset-env": "7.16.11",
+        "@tibco/spotfire-mods-dev-server": "^1.0.1",
+        "babel-loader": "8.2.4",
+        "copy-webpack-plugin": "10.2.4",
+        "core-js": "3.21.1",
+        "d3": "^7.8.5",
+        "webpack": "^5.89.0",
+        "webpack-cli": "4.9.2"
+    }
+}
