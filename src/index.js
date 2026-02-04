@@ -51,32 +51,62 @@ Spotfire.initialize(async (mod) => {
         
         // Calculate derived colors based on theme (light/dark detection)
         const bgColor = general.backgroundColor;
+        const textColor = general.font.color;
         const isDarkTheme = isColorDark(bgColor);
         
         if (isDarkTheme) {
             // Dark theme - lighter secondary colors
-            root.style.setProperty('--sf-text-secondary', adjustColorBrightness(general.font.color, -20));
-            root.style.setProperty('--sf-text-muted', adjustColorBrightness(general.font.color, -40));
-            root.style.setProperty('--sf-bg-secondary', adjustColorBrightness(bgColor, 15));
+            root.style.setProperty('--sf-text-secondary', adjustColorBrightness(textColor, -20));
+            root.style.setProperty('--sf-text-muted', adjustColorBrightness(textColor, -40));
+            root.style.setProperty('--sf-bg-secondary', adjustColorBrightness(bgColor, 12));
+            root.style.setProperty('--sf-bg-tertiary', adjustColorBrightness(bgColor, 20));
             root.style.setProperty('--sf-bg-hover', adjustColorBrightness(bgColor, 25));
-            root.style.setProperty('--sf-border-light', adjustColorBrightness(bgColor, 30));
-            root.style.setProperty('--sf-border-medium', adjustColorBrightness(bgColor, 40));
+            root.style.setProperty('--sf-border-light', adjustColorBrightness(bgColor, 25));
+            root.style.setProperty('--sf-border-medium', adjustColorBrightness(bgColor, 35));
+            root.style.setProperty('--sf-border-accent', 'rgba(99, 102, 241, 0.4)');
+            // Dark theme shadows are more subtle
+            root.style.setProperty('--sf-shadow-xs', '0 1px 2px rgba(0, 0, 0, 0.3)');
+            root.style.setProperty('--sf-shadow-sm', '0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3)');
+            root.style.setProperty('--sf-shadow-md', '0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.4)');
         } else {
             // Light theme - darker secondary colors  
-            root.style.setProperty('--sf-text-secondary', adjustColorBrightness(general.font.color, 30));
-            root.style.setProperty('--sf-text-muted', adjustColorBrightness(general.font.color, 50));
-            root.style.setProperty('--sf-bg-secondary', adjustColorBrightness(bgColor, -5));
-            root.style.setProperty('--sf-bg-hover', adjustColorBrightness(bgColor, -10));
-            root.style.setProperty('--sf-border-light', adjustColorBrightness(bgColor, -15));
-            root.style.setProperty('--sf-border-medium', adjustColorBrightness(bgColor, -25));
+            root.style.setProperty('--sf-text-secondary', adjustColorBrightness(textColor, 30));
+            root.style.setProperty('--sf-text-muted', adjustColorBrightness(textColor, 50));
+            root.style.setProperty('--sf-bg-secondary', adjustColorBrightness(bgColor, -4));
+            root.style.setProperty('--sf-bg-tertiary', adjustColorBrightness(bgColor, -8));
+            root.style.setProperty('--sf-bg-hover', adjustColorBrightness(bgColor, -6));
+            root.style.setProperty('--sf-border-light', adjustColorBrightness(bgColor, -10));
+            root.style.setProperty('--sf-border-medium', adjustColorBrightness(bgColor, -18));
+            root.style.setProperty('--sf-border-accent', 'rgba(99, 102, 241, 0.3)');
+            // Light theme shadows
+            root.style.setProperty('--sf-shadow-xs', '0 1px 2px rgba(0, 0, 0, 0.04)');
+            root.style.setProperty('--sf-shadow-sm', '0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)');
+            root.style.setProperty('--sf-shadow-md', '0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04)');
         }
+        
+        // Add a class for theme type to help with CSS targeting
+        document.body.classList.toggle('dark-theme', isDarkTheme);
+        document.body.classList.toggle('light-theme', !isDarkTheme);
         
         return { general, scales, isDarkTheme };
     };
     
     // Helper: determine if color is dark
     const isColorDark = (color) => {
-        const hex = color.replace('#', '');
+        // Handle various color formats
+        let hex = color;
+        if (color.startsWith('rgb')) {
+            // Convert rgb/rgba to hex
+            const match = color.match(/\d+/g);
+            if (match && match.length >= 3) {
+                const r = parseInt(match[0]);
+                const g = parseInt(match[1]);
+                const b = parseInt(match[2]);
+                const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                return luminance < 0.5;
+            }
+        }
+        hex = hex.replace('#', '');
         const r = parseInt(hex.substr(0, 2), 16);
         const g = parseInt(hex.substr(2, 2), 16);
         const b = parseInt(hex.substr(4, 2), 16);
@@ -86,10 +116,24 @@ Spotfire.initialize(async (mod) => {
     
     // Helper: adjust color brightness
     const adjustColorBrightness = (color, percent) => {
-        const hex = color.replace('#', '');
-        const r = Math.min(255, Math.max(0, parseInt(hex.substr(0, 2), 16) + Math.round(255 * percent / 100)));
-        const g = Math.min(255, Math.max(0, parseInt(hex.substr(2, 2), 16) + Math.round(255 * percent / 100)));
-        const b = Math.min(255, Math.max(0, parseInt(hex.substr(4, 2), 16) + Math.round(255 * percent / 100)));
+        // Handle various color formats
+        let r, g, b;
+        if (color.startsWith('rgb')) {
+            const match = color.match(/\d+/g);
+            if (match && match.length >= 3) {
+                r = parseInt(match[0]);
+                g = parseInt(match[1]);
+                b = parseInt(match[2]);
+            }
+        } else {
+            const hex = color.replace('#', '');
+            r = parseInt(hex.substr(0, 2), 16);
+            g = parseInt(hex.substr(2, 2), 16);
+            b = parseInt(hex.substr(4, 2), 16);
+        }
+        r = Math.min(255, Math.max(0, r + Math.round(255 * percent / 100)));
+        g = Math.min(255, Math.max(0, g + Math.round(255 * percent / 100)));
+        b = Math.min(255, Math.max(0, b + Math.round(255 * percent / 100)));
         return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
     };
     
@@ -213,6 +257,10 @@ Spotfire.initialize(async (mod) => {
             
             // Build options - Configuration panel values take priority over Spotfire properties
             // This allows users to customize via the gear icon config panel
+            const yAxisTitles = (yAxis && Array.isArray(yAxis.parts) && yAxis.parts.length > 0)
+                ? yAxis.parts.map((part) => part.displayName || part.expression || "Value")
+                : ["Value"];
+
             const options = {
                 timePeriod: timePeriod.value(),
                 selectedMarket: selectedMarket.value(),
@@ -229,6 +277,7 @@ Spotfire.initialize(async (mod) => {
                 enableMarking: currentConfig.interactions?.enableMarking ?? true,
                 highlightOnLegendHover: currentConfig.interactions?.highlightOnLegendHover ?? true,
                 rowLimit: currentConfig.display?.rowLimit ?? 5000,
+                yAxisTitles: yAxisTitles,
                 // Pass axis info for dynamic rendering
                 hasMarketTypeAxis: marketTypeAxisValue ? marketTypeAxisValue.parts.length > 0 : false,
                 hasCurrentValueAxis: currentValueAxisValue ? currentValueAxisValue.parts.length > 0 : false,

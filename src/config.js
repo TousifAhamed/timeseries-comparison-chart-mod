@@ -224,6 +224,7 @@ class ConfigurationUI {
         this.vizElem = null;
         this.configElem = null;
         this.configIconElem = null;
+        this.overlayElem = null;
         
         this._draw();
     }
@@ -231,6 +232,7 @@ class ConfigurationUI {
     _draw() {
         if (!this.isEditing) return;
         this._drawIcon();
+        this._drawOverlay();
         this._drawConfigPanel();
     }
 
@@ -255,6 +257,14 @@ class ConfigurationUI {
         });
     }
 
+    _drawOverlay() {
+        const overlayElem = document.createElement('div');
+        overlayElem.classList.add('config-overlay');
+        overlayElem.addEventListener('click', () => this._hideConfiguration());
+        this.containerElem.appendChild(overlayElem);
+        this.overlayElem = overlayElem;
+    }
+
     _drawConfigPanel() {
         const template = `
             <div class="config-header">
@@ -273,7 +283,7 @@ class ConfigurationUI {
         const configElem = document.createElement('div');
         configElem.classList.add('configuration-panel');
         configElem.innerHTML = template.trim();
-        configElem.style.display = 'none';
+        configElem.setAttribute('aria-hidden', 'true');
         
         this.containerElem.appendChild(configElem);
         this.configElem = configElem;
@@ -298,13 +308,21 @@ class ConfigurationUI {
 
     _viewConfiguration() {
         this._renderForm();
-        this.configElem.style.display = 'flex';
+        this.configElem.classList.add('open');
+        this.configElem.setAttribute('aria-hidden', 'false');
+        if (this.overlayElem) {
+            this.overlayElem.classList.add('open');
+        }
         this.configIconElem.style.display = 'none';
         this.configManager.active = true;
     }
 
     _hideConfiguration() {
-        this.configElem.style.display = 'none';
+        this.configElem.classList.remove('open');
+        this.configElem.setAttribute('aria-hidden', 'true');
+        if (this.overlayElem) {
+            this.overlayElem.classList.remove('open');
+        }
         this.configIconElem.style.display = 'flex';
         this.configManager.active = false;
     }

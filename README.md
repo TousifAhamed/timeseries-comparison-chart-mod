@@ -18,6 +18,20 @@ A modern, interactive time series comparison chart mod for **TIBCO Spotfire**, i
 - **Legend highlights** - Hover over legend items to highlight specific series
 - **Spotfire filtering** - Responds to standard Spotfire filter panel
 
+## 🆕 Version 2 Updates
+
+- **Spotfire theme compliance**: full dynamic theme variable support (light/dark/custom).
+- **Improved layout**: fixed left/right chart container sizing and legend alignment.
+- **Legend readability**: grid-based columns for Application, Value, Change, % Change.
+- **X-axis labels**: user-provided formats respected when not using hierarchy.
+- **End point highlighter**: visible ring on trend line endpoints.
+- **Marking improvements**:
+   - Click near point marks nearest data point.
+   - Click outside chart clears marking.
+   - Rectangular marking selects the most relevant line (series with most points).
+- **Zoom controls**: left Y-axis and bottom X-axis zoom sliders.
+- **Header/legend labels**: “COMPARE APPLICATIONS” and “Application” column.
+
 ### Design
 - **Responsive layout** - Adapts to different window sizes
 - **Spotfire theme support** - Automatically adopts light/dark themes
@@ -78,10 +92,39 @@ The production bundle will be in the `dist/` folder.
 
 | Axis | Mode | Description |
 |------|------|-------------|
-| **X** | Categorical | Date/Time column |
-| **Y** | Continuous | Value to plot (e.g., % change, price) |
+| **X** | Categorical | Date/Time column(s) - **Supports multiple columns** for hierarchical aggregation (Year, Month, Week) |
+| **Y** | Continuous | Value(s) to plot - **Supports multiple measures** for dual Y-axes |
 | **Color** | Categorical | Series identifier (e.g., symbol, name) |
 | **MarketType** | Categorical | *(Optional)* Category for filtering tabs |
+
+### Multiple X-Axis Columns Support
+
+The chart now supports multiple categorical columns on the X-axis for hierarchical time aggregation:
+
+- Stack multiple time columns (e.g., Year → Month → Week)
+- Data is automatically aggregated at the finest granularity
+- Hierarchical keys prevent duplicate data points
+- Perfect for drilling down from years to months to weeks
+
+To use multiple X-axis columns:
+1. Drag Year to the X-axis
+2. Drag Month to the X-axis (stacked below Year)
+3. Optionally add Week for even finer granularity
+4. Data points with the same hierarchical path are aggregated (latest value used)
+
+### Multiple Y-Axes Support
+
+The chart now supports multiple Y-axis measures, enabling you to:
+
+- Compare series with different scales (e.g., price vs. volume)
+- Display a secondary Y-axis on the right side
+- Color-code axes to match their respective series
+- Each axis auto-scales independently
+
+To use multiple Y-axes:
+1. Drag multiple measures to the Y-axis
+2. The first measure uses the left axis, second uses the right
+3. Each series is automatically assigned to an axis based on its measure
 
 ### Mod Properties
 

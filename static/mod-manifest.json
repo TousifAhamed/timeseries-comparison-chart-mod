@@ -52,7 +52,7 @@
                 "placement": "bottom",
                 "dropTarget": {
                     "icon": "XAxis3D",
-                    "description": "Date/Time Column"
+                    "description": "Date/Time Column(s) - Supports multiple columns for hierarchical aggregation (Year, Month, Week)"
                 },
                 "propertyControl": {
                     "title": "Date"
@@ -65,18 +65,18 @@
             {
                 "name": "Y",
                 "mode": "continuous",
-                "allowMultipleMeasures": false,
+                "allowMultipleMeasures": true,
                 "placement": "left",
                 "dropTarget": {
                     "icon": "YAxis3D",
-                    "description": "Percentage Change Value"
+                    "description": "Value(s) - Supports multiple measures"
                 },
                 "propertyControl": {
-                    "title": "% Change"
+                    "title": "Values"
                 },
                 "legendItem": {
-                    "title": "% Change",
-                    "defaultVisibility": "hidden"
+                    "title": "Values",
+                    "defaultVisibility": "visible"
                 }
             },
             {
